@@ -11,7 +11,11 @@
  *     Obeo - initial API and implementation
  *******************************************************************************/
 
-import { DataExtension, ExtensionRegistryMergeStrategy } from '@eclipse-sirius/sirius-components-core';
+import {
+  DataExtension,
+  ExtensionRegistryMergeStrategy,
+  workbenchViewContributionExtensionPoint,
+} from '@eclipse-sirius/sirius-components-core';
 import { omniboxCommandOverrideContributionExtensionPoint } from '@eclipse-sirius/sirius-components-omnibox';
 import { treeItemContextMenuEntryOverrideExtensionPoint } from '@eclipse-sirius/sirius-components-trees';
 import {
@@ -36,6 +40,9 @@ export class SysONExtensionRegistryMergeStrategy
     }
     if (identifier === treeItemContextMenuEntryOverrideExtensionPoint.identifier) {
       return this.mergeTreeItemContributions(existingValues, newValues);
+    }
+    if (identifier === workbenchViewContributionExtensionPoint.identifier) {
+      return this.mergeWorkbenchViewContributions(existingValues, newValues);
     }
     return newValues;
   }
@@ -67,6 +74,16 @@ export class SysONExtensionRegistryMergeStrategy
     return {
       identifier: `syson_${treeItemContextMenuEntryOverrideExtensionPoint.identifier}`,
       data: [...existingContributions.data, ...newContributions.data],
+    };
+  }
+
+  private mergeWorkbenchViewContributions(
+    existingWorkbenchViewContributions: DataExtension<any>,
+    newWorkbenchViewContributions: DataExtension<any>
+  ): DataExtension<any> {
+    return {
+      identifier: `syson_${workbenchViewContributionExtensionPoint.identifier}`,
+      data: [...existingWorkbenchViewContributions.data, ...newWorkbenchViewContributions.data],
     };
   }
 }

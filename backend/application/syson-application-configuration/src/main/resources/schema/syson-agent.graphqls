@@ -1,0 +1,81 @@
+extend type Mutation {
+  sendAgentMessage(input: SendAgentMessageInput!): SendAgentMessagePayload!
+  confirmAgentProposal(input: ConfirmAgentProposalInput!): ConfirmAgentProposalPayload!
+  cancelAgentProposal(input: CancelAgentProposalInput!): CancelAgentProposalPayload!
+}
+
+input SendAgentMessageInput {
+  id: ID!
+  editingContextId: ID!
+  message: String!
+  selectedObjectIds: [ID!]!
+}
+
+union SendAgentMessagePayload = ErrorPayload | AgentMessageSuccessPayload
+
+type AgentMessageSuccessPayload {
+  id: ID!
+  reply: AgentReply!
+}
+
+input ConfirmAgentProposalInput {
+  id: ID!
+  editingContextId: ID!
+  proposal: AgentProposalInput!
+}
+
+union ConfirmAgentProposalPayload = ErrorPayload | AgentProposalSuccessPayload
+
+input CancelAgentProposalInput {
+  id: ID!
+  editingContextId: ID!
+  proposal: AgentProposalInput!
+}
+
+union CancelAgentProposalPayload = ErrorPayload | AgentProposalSuccessPayload
+
+input AgentProposalInput {
+  proposalId: ID!
+  toolId: ID!
+  actionType: String!
+  targetObjectId: ID
+  targetLabel: String
+  elementType: String
+  summary: String!
+  argumentsJson: String!
+}
+
+type AgentProposalSuccessPayload {
+  id: ID!
+  reply: AgentReply!
+}
+
+type AgentReply {
+  messages: [AgentMessage!]!
+  proposal: AgentProposal
+  pendingConfirmation: Boolean!
+}
+
+type AgentMessage {
+  id: ID!
+  role: String!
+  content: String!
+  variant: String!
+}
+
+type AgentProposal {
+  proposalId: ID!
+  toolId: ID!
+  actionType: String!
+  targetObjectId: ID
+  targetLabel: String
+  elementType: String
+  summary: String!
+  argumentsJson: String!
+  fields: [AgentProposalField!]!
+}
+
+type AgentProposalField {
+  name: String!
+  value: String!
+}

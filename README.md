@@ -39,3 +39,12 @@ SysML® is a trademark owned by OMG with specific guidelines detailed here: <htt
 ## More about SysON
 
 You can visit the [SysON Website](https://mbse-syson.org/) or contact [Obeo](https://www.obeosoft.com/en/contact) for more information.
+
+## Agent Platform Docs
+
+This fork currently contains an experimental but working native Agent platform integrated into the SysON workbench.
+
+Related documents:
+
+- [Agent implementation log](./AGENT_IMPLEMENTATION_LOG.md)
+- [Agent platform extension guide](./AGENT_PLATFORM_README.md)

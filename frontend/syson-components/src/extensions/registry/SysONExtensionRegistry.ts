@@ -10,7 +10,7 @@
  * Contributors:
  *     Obeo - initial API and implementation
  *******************************************************************************/
-import { ExtensionRegistry } from '@eclipse-sirius/sirius-components-core';
+import { ExtensionRegistry, workbenchViewContributionExtensionPoint } from '@eclipse-sirius/sirius-components-core';
 import {
   diagramToolbarActionExtensionPoint,
   EdgeAppearanceSection,
@@ -38,6 +38,8 @@ import {
   ImportLibraryCommand,
   navigationBarMenuIconExtensionPoint,
 } from '@eclipse-sirius/sirius-web-application';
+import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
+import { createElement } from 'react';
 
 import { Edge, Node, useStoreApi } from '@xyflow/react';
 import { SysMLImportedPackageNodePaletteAppearanceSection } from '../../nodes/imported_package/SysMLImportedPackageNodePaletteAppearanceSection';
@@ -45,6 +47,7 @@ import { SysMLNoteNodePaletteAppearanceSection } from '../../nodes/note/SysMLNot
 import { SysMLPackageNodePaletteAppearanceSection } from '../../nodes/package/SysMLPackageNodePaletteAppearanceSection';
 import { sysMLNodesStyleDocumentTransform } from '../../nodes/SysMLNodesDocumentTransform';
 import { SysMLViewFrameNodePaletteAppearanceSection } from '../../nodes/view_frame/SysMLViewFrameNodePaletteAppearanceSection';
+import { AgentWorkbenchView } from '../agent/AgentWorkbenchView';
 import { InsertTextualSysMLMenuContribution } from '../InsertTextualSysMLv2MenuContribution';
 import { SysONNavigationBarMenuIcon } from '../navigationBarMenu/SysONNavigationBarMenuIcon';
 import { PublishProjectSysMLContentsAsLibraryCommand } from '../omnibox/PublishProjectSysMLContentsAsLibraryCommand';
@@ -108,6 +111,18 @@ sysONExtensionRegistry.addComponent(toolsButtonMenuEntryExtensionPoint, {
 sysONExtensionRegistry.addComponent(toolsButtonMenuEntryExtensionPoint, {
   identifier: `syson_${toolsButtonMenuEntryExtensionPoint.identifier}`,
   Component: ExposeRequirementsMenuEntry,
+});
+
+sysONExtensionRegistry.putData(workbenchViewContributionExtensionPoint, {
+  identifier: `syson_${workbenchViewContributionExtensionPoint.identifier}`,
+  data: [
+    {
+      id: 'agent',
+      title: 'Agent',
+      icon: createElement(SmartToyOutlinedIcon),
+      component: AgentWorkbenchView,
+    },
+  ],
 });
 
 const treeItemContextMenuOverrideContributions: TreeItemContextMenuOverrideContribution[] = [
