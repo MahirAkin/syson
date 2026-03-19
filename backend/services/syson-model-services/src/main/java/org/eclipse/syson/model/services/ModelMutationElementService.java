@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.syson.model.services;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import org.eclipse.emf.ecore.EClass;
@@ -26,6 +27,7 @@ import org.eclipse.syson.sysml.Relationship;
 import org.eclipse.syson.sysml.RequirementUsage;
 import org.eclipse.syson.sysml.SatisfyRequirementUsage;
 import org.eclipse.syson.sysml.SysmlFactory;
+import org.eclipse.syson.sysml.SysmlPackage;
 import org.eclipse.syson.sysml.ViewDefinition;
 import org.eclipse.syson.sysml.ViewUsage;
 import org.eclipse.syson.sysml.helper.EMFUtils;
@@ -224,6 +226,38 @@ public class ModelMutationElementService {
         }
 
         return viewUsageOpt;
+    }
+
+    /**
+     * Creates a named {@link PartUsage} in the given owning element.
+     *
+     * @param owningElement
+     *            the target container of the new {@link PartUsage}
+     * @param declaredName
+     *            the declared name to assign
+     * @return the newly created {@link PartUsage}, if the owning element can contain it
+     */
+    public Optional<PartUsage> createPartUsage(Element owningElement, String declaredName) {
+        Objects.requireNonNull(owningElement);
+        Optional<PartUsage> partUsageOpt = Optional.empty();
+
+        Optional<EClass> membershipClassOpt = new GetIntermediateContainerCreationSwitch(owningElement).doSwitch(SysmlPackage.eINSTANCE.getPartUsage());
+        if (membershipClassOpt.isPresent()) {
+            EObject partUsageMembership = SysmlFactory.eINSTANCE.create(membershipClassOpt.get());
+            if (partUsageMembership instanceof Relationship partUsageRelationship) {
+                PartUsage newPartUsage = SysmlFactory.eINSTANCE.createPartUsage();
+                owningElement.getOwnedRelationship().add(partUsageRelationship);
+                partUsageRelationship.getOwnedRelatedElement().add(newPartUsage);
+                this.metamodelMutationElementService.initialize(newPartUsage);
+
+                if (declaredName != null && !declaredName.isBlank()) {
+                    newPartUsage.setDeclaredName(declaredName.trim());
+                }
+                partUsageOpt = Optional.of(newPartUsage);
+            }
+        }
+
+        return partUsageOpt;
     }
 
     /**

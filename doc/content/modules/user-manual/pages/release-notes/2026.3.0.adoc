@@ -32,6 +32,15 @@ It now follows the same rule than all other graphical node: if a compartment tha
 ** Fix the `EnumerationDefinition` graphical node compartment name from `enumerations` to `enums`, to follow the SysMLv2 specification.
 ** Fix the direct edit and the display of `ends` graphical node elements inside the _ends_ compartment.
 Now the _end_ keyword is not displayed anymore in the label of these graphical nodes, and the direct edit only allows to edit the name of the `end` element instead of the full label which was confusing for users.
+** Fix an error when invoking the tools _New Start Action_ or _New Done Action_ from inside a package named `Actions`.
+** Fix the support for removing the multiplicity using the direct edit.
++ During the direct edit, typing `[]` will remove the multiplicity if it exists, as it is supposed to do.
+** Fix an issue where the _New Flow (flow)_ tool between two parameters was broken.
+** The `ForkNode` and `JoinNode` graphical nodes style have been updated and are restricted to horizontal resizing.
++ Consequently, their entire footprint is filled with black, ensuring that all incoming and outgoing edges maintain a valid connection point.
+** Fix an issue where the _Add existing elements_ tool was not working correctly on the _action flow_ compartment of `ActionUsage` graphical nodes.
+** Fix the user feedback when dropping an `Element` from the _Explorer_ view which is already exposed on a diagram.
+** Fix an issue where the non-empty compartments of graphical nodes were being displayed when executing the _Add existing elements_ tool.
 
 * In textual import/export:
 
@@ -77,9 +86,8 @@ part system {
 }
 ----
 
-** Fix the textual import so `Relationships` can be annotated.
-Such as in :
-
+** Fix the textual import so `Relationships` can be annotated such as in:
++
 [source]
 ----
 package Test {
@@ -99,10 +107,12 @@ package Test {
 ** Fix the export of `LiteralString` with backslash characters.
 ** Fix textual import of `LiteralString` containing escaped backslash. In the following example `attribute a1 = "A \\ B";`, the value of "a1" is now "A \ B".
 The previous implementation was importing the value "A \\ B".
+** Fix error when importing SysML snippets referencing unknown units which could make the resulting model inconsistent
 
 * In _Explorer_ view:
 
 ** Fix an issue where creating a new model using the _Create a new model_ action in the _Explorer_ view was not adding the ".sysml" extension to the model name.
+** Fix an issue where user libraries were moved from the `User libraries` folder to the root of the project when a child element was created in it.
 
 * In _Details_ view:
 

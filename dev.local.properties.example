@@ -1,0 +1,14 @@
+################################################################################
+# Local SysON development overrides
+#
+# Copy this file to `dev.local.properties` and fill in your local secrets.
+# The real `dev.local.properties` file is gitignored.
+################################################################################
+
+# Required for the SysON agent
+syson.agent.llm.openai.api-key=replace-with-your-openai-api-key
+
+# Optional overrides
+# syson.agent.llm.openai.model=gpt-4.1-mini
+# syson.agent.llm.openai.base-url=https://api.openai.com/v1
+# syson.agent.llm.openai.timeout-seconds=20

@@ -95,7 +95,15 @@ It now follows the same rule than all other graphical node: if a compartment tha
 - https://github.com/eclipse-syson/syson/issues/1990[#1990] [diagrams] Fix the `EnumerationDefinition` graphical node compartment name to follow the SysMLv2 specification.
 - https://github.com/eclipse-syson/syson/issues/2049[#2049] [diagrams] Fix the direct edit and the display of `ends` graphical node elements inside the _ends_ compartment.
 Now the _end_ keyword is not displayed anymore in the label of these graphical nodes, and the direct edit only allows to edit the name of the end instead of the full label which was confusing for users.
-
+- https://github.com/eclipse-syson/syson/issues/2054[#2054] [diagrams] Fix an error when invoking the tools _New Start Action_ or _New Done Action_ from inside a package named `Actions`.
+- https://github.com/eclipse-syson/syson/issues/2057[#2057] [diagrams] Fix the support for removing the multiplicity using the direct edit.
+- https://github.com/eclipse-syson/syson/issues/1938[#1938] [diagrams] Fix an issue where the _New Flow (flow)_ tool between two parameters was broken.
+- https://github.com/eclipse-syson/syson/issues/2058[#2058] [diagrams] Fix error when importing SysML snippets referencing unknown units which could make the resulting model inconsistent
+- https://github.com/eclipse-syson/syson/issues/2053[#2053] [diagrams] Prevent incoming and outgoing graphical edges of a graphical `ForkNode` or `JoinNode` to point empty space.
+- https://github.com/eclipse-syson/syson/issues/2059[#2059] [diagrams] Fix an issue where the _Add existing elements_ tool was not working correctly on the _action flow_ compartment of `ActionUsage` graphical nodes.
+- https://github.com/eclipse-syson/syson/issues/2043[#2043] [explorer] Prevent user libraries from being moved to the root of the project when a child is created in it.
+- https://github.com/eclipse-syson/syson/issues/2056[#2056] [diagams] Fix the user feedback when dropping an `Element` which is already exposed on a diagram.
+- https://github.com/eclipse-syson/syson/issues/2048[#2048] [diagrams] Fix an issue where the non-empty compartments of graphical nodes were being displayed when executing the _Add existing elements_ tool.
 
 === Improvements
 
@@ -149,6 +157,9 @@ Add possibility for validation rules to specify their severity ; the SysML rules
 Tweak the diagnostic messages to help users understand where the erroneous element is in their editing context.
 Make sure diagnostics are sorted according to their validated element and its containing document.
 - https://github.com/eclipse-syson/syson/issues/2042[#2042] [import] Improve error reporting while uploading a document.
+- https://github.com/eclipse-syson/syson/issues/2057[#2057] [diagrams] Add the support for empty value for multiplicity in the ANTLR grammar.
+- https://github.com/eclipse-syson/syson/issues/2053[#2053] [diagrams] The graphical `ForkNode` and `JoinNode` now use `RectangularNodeStyleDescription` and are restricted to horizontal resizing.
+Consequently, their entire footprint is filled with black, ensuring that all incoming and outgoing edges maintain a valid connection point.
 
 === New features
 
