@@ -1,7 +1,17 @@
+extend type Query {
+  agentSelectionObject(editingContextId: ID!, objectId: ID!): AgentSelectionObject
+}
+
 extend type Mutation {
   sendAgentMessage(input: SendAgentMessageInput!): SendAgentMessagePayload!
   confirmAgentProposal(input: ConfirmAgentProposalInput!): ConfirmAgentProposalPayload!
   cancelAgentProposal(input: CancelAgentProposalInput!): CancelAgentProposalPayload!
+}
+
+type AgentSelectionObject {
+  id: ID!
+  label: String!
+  type: String!
 }
 
 input SendAgentMessageInput {

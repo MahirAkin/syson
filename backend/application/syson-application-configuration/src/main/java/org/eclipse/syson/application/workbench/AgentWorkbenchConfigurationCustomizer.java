@@ -15,7 +15,10 @@ package org.eclipse.syson.application.workbench;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.sirius.components.collaborative.workbenchconfiguration.api.IWorkbenchConfigurationCustomizer;
+import java.util.Objects;
+
+import org.eclipse.sirius.components.collaborative.workbenchconfiguration.api.IDefaultWorkbenchConfigurationProvider;
+import org.eclipse.sirius.components.collaborative.workbenchconfiguration.api.IWorkbenchConfigurationProviderDelegate;
 import org.eclipse.sirius.components.collaborative.workbenchconfiguration.dto.DefaultViewConfiguration;
 import org.eclipse.sirius.components.collaborative.workbenchconfiguration.dto.IViewConfiguration;
 import org.eclipse.sirius.components.collaborative.workbenchconfiguration.dto.WorkbenchConfiguration;
@@ -24,11 +27,15 @@ import org.springframework.stereotype.Service;
 
 /**
  * Adds the agent view to the right workbench panel.
+ * <p>
+ * Sirius Web 2026.1.6 resolves workbench layouts through {@link IWorkbenchConfigurationProviderDelegate} rather than
+ * the older customizer hook, so this class wraps the default provider and augments its result.
+ * </p>
  *
  * @author Codex
  */
 @Service
-public class AgentWorkbenchConfigurationCustomizer implements IWorkbenchConfigurationCustomizer {
+public class AgentWorkbenchConfigurationCustomizer implements IWorkbenchConfigurationProviderDelegate {
 
     public static final String AGENT_VIEW_ID = "agent";
 
@@ -36,8 +43,20 @@ public class AgentWorkbenchConfigurationCustomizer implements IWorkbenchConfigur
 
     private static final String DETAILS_VIEW_ID = "details";
 
+    private final IDefaultWorkbenchConfigurationProvider defaultWorkbenchConfigurationProvider;
+
+    public AgentWorkbenchConfigurationCustomizer(IDefaultWorkbenchConfigurationProvider defaultWorkbenchConfigurationProvider) {
+        this.defaultWorkbenchConfigurationProvider = Objects.requireNonNull(defaultWorkbenchConfigurationProvider);
+    }
+
     @Override
-    public WorkbenchConfiguration customize(String editingContextId, WorkbenchConfiguration workbenchConfiguration) {
+    public boolean canHandle(String editingContextId) {
+        return true;
+    }
+
+    @Override
+    public WorkbenchConfiguration getWorkbenchConfiguration(String editingContextId) {
+        WorkbenchConfiguration workbenchConfiguration = this.defaultWorkbenchConfigurationProvider.getWorkbenchConfiguration(editingContextId);
         var customizedPanels = workbenchConfiguration.workbenchPanels().stream()
                 .map(this::customizeRightPanel)
                 .toList();

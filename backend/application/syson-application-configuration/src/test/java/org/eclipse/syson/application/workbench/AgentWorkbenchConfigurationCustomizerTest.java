@@ -13,9 +13,12 @@
 package org.eclipse.syson.application.workbench;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import org.eclipse.sirius.components.collaborative.workbenchconfiguration.api.IDefaultWorkbenchConfigurationProvider;
 import org.eclipse.sirius.components.collaborative.workbenchconfiguration.dto.DefaultViewConfiguration;
 import org.eclipse.sirius.components.collaborative.workbenchconfiguration.dto.WorkbenchConfiguration;
 import org.eclipse.sirius.components.collaborative.workbenchconfiguration.dto.WorkbenchMainPanelConfiguration;
@@ -28,8 +31,6 @@ import org.junit.jupiter.api.Test;
  * @author Codex
  */
 public class AgentWorkbenchConfigurationCustomizerTest {
-
-    private final AgentWorkbenchConfigurationCustomizer customizer = new AgentWorkbenchConfigurationCustomizer();
 
     @Test
     public void addAgentViewAfterDetailsInRightWorkbenchPanel() {
@@ -44,7 +45,11 @@ public class AgentWorkbenchConfigurationCustomizerTest {
                 )
         );
 
-        WorkbenchConfiguration customizedWorkbenchConfiguration = this.customizer.customize("editing-context", workbenchConfiguration);
+        IDefaultWorkbenchConfigurationProvider defaultWorkbenchConfigurationProvider = mock(IDefaultWorkbenchConfigurationProvider.class);
+        when(defaultWorkbenchConfigurationProvider.getWorkbenchConfiguration("editing-context")).thenReturn(workbenchConfiguration);
+        AgentWorkbenchConfigurationCustomizer customizer = new AgentWorkbenchConfigurationCustomizer(defaultWorkbenchConfigurationProvider);
+
+        WorkbenchConfiguration customizedWorkbenchConfiguration = customizer.getWorkbenchConfiguration("editing-context");
 
         List<String> rightPanelViewIds = customizedWorkbenchConfiguration.workbenchPanels().stream()
                 .filter(panel -> "right".equals(panel.id()))
@@ -70,7 +75,11 @@ public class AgentWorkbenchConfigurationCustomizerTest {
                 )
         );
 
-        WorkbenchConfiguration customizedWorkbenchConfiguration = this.customizer.customize("editing-context", workbenchConfiguration);
+        IDefaultWorkbenchConfigurationProvider defaultWorkbenchConfigurationProvider = mock(IDefaultWorkbenchConfigurationProvider.class);
+        when(defaultWorkbenchConfigurationProvider.getWorkbenchConfiguration("editing-context")).thenReturn(workbenchConfiguration);
+        AgentWorkbenchConfigurationCustomizer customizer = new AgentWorkbenchConfigurationCustomizer(defaultWorkbenchConfigurationProvider);
+
+        WorkbenchConfiguration customizedWorkbenchConfiguration = customizer.getWorkbenchConfiguration("editing-context");
 
         long agentViewCount = customizedWorkbenchConfiguration.workbenchPanels().stream()
                 .flatMap(panel -> panel.views().stream())
@@ -78,5 +87,13 @@ public class AgentWorkbenchConfigurationCustomizerTest {
                 .count();
 
         assertThat(agentViewCount).isEqualTo(1);
+    }
+
+    @Test
+    public void canHandleAnyEditingContext() {
+        IDefaultWorkbenchConfigurationProvider defaultWorkbenchConfigurationProvider = mock(IDefaultWorkbenchConfigurationProvider.class);
+        AgentWorkbenchConfigurationCustomizer customizer = new AgentWorkbenchConfigurationCustomizer(defaultWorkbenchConfigurationProvider);
+
+        assertThat(customizer.canHandle("editing-context")).isTrue();
     }
 }

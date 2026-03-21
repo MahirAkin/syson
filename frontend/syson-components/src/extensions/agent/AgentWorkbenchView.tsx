@@ -11,6 +11,7 @@
  *     Obeo - initial API and implementation
  *******************************************************************************/
 
+import { gql, useQuery } from '@apollo/client';
 import { useSelection, WorkbenchViewComponentProps, WorkbenchViewHandle } from '@eclipse-sirius/sirius-components-core';
 import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
 import Box from '@mui/material/Box';
@@ -24,7 +25,18 @@ import { forwardRef, KeyboardEvent, useImperativeHandle, useState } from 'react'
 import { makeStyles } from 'tss-react/mui';
 import { AgentMessageList } from './AgentMessageList';
 import { AgentProposalCard } from './AgentProposalCard';
+import { AgentSelectionObject } from './agent.types';
 import { useAgentConversation } from './useAgentConversation';
+
+const getAgentSelectionObjectQuery = gql`
+  query getAgentSelectionObject($editingContextId: ID!, $objectId: ID!) {
+    agentSelectionObject(editingContextId: $editingContextId, objectId: $objectId) {
+      id
+      label
+      type
+    }
+  }
+`;
 
 const useAgentWorkbenchViewStyles = makeStyles()((theme) => ({
   root: {
@@ -68,7 +80,38 @@ const useAgentWorkbenchViewStyles = makeStyles()((theme) => ({
     overflowWrap: 'anywhere',
     fontFamily: 'monospace',
   },
+  subtleCode: {
+    overflowWrap: 'anywhere',
+    fontFamily: 'monospace',
+    opacity: 0.72,
+  },
+  selectionLabel: {
+    fontWeight: 600,
+  },
+  selectionRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+    minWidth: 0,
+  },
+  selectionPrimaryText: {
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
+  selectionTypeText: {
+    flex: '0 1 auto',
+    minWidth: 0,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+  },
 }));
+
+interface GetAgentSelectionObjectData {
+  agentSelectionObject: AgentSelectionObject | null;
+}
 
 export const AgentWorkbenchView = forwardRef<WorkbenchViewHandle, WorkbenchViewComponentProps>(
   ({ id, editingContextId }, ref) => {
@@ -90,6 +133,14 @@ export const AgentWorkbenchView = forwardRef<WorkbenchViewHandle, WorkbenchViewC
     );
 
     const firstSelectedObjectId = selection.entries[0]?.id ?? null;
+    const { data: selectionData, loading: selectionLoading } = useQuery<GetAgentSelectionObjectData>(getAgentSelectionObjectQuery, {
+      variables: {
+        editingContextId,
+        objectId: firstSelectedObjectId,
+      },
+      skip: !firstSelectedObjectId || selection.entries.length !== 1,
+    });
+    const primarySelection = selectionData?.agentSelectionObject ?? null;
     const handleSubmit = async () => {
       const nextMessage = draftMessage;
       const sent = await sendMessage(nextMessage);
@@ -118,20 +169,30 @@ export const AgentWorkbenchView = forwardRef<WorkbenchViewHandle, WorkbenchViewC
         </div>
 
         <Box className={classes.section}>
-          <Typography variant="subtitle2">Editing context</Typography>
-          <Typography variant="body2" color="text.secondary" className={classes.code}>
-            {editingContextId}
-          </Typography>
-        </Box>
-
-        <Box className={classes.section}>
           <Typography variant="subtitle2">Current selection</Typography>
           <Typography variant="body2" color="text.secondary">
             {selection.entries.length} item(s) selected
           </Typography>
-          <Typography variant="body2" color="text.secondary" className={classes.code}>
-            {firstSelectedObjectId ?? 'No element selected yet'}
-          </Typography>
+          {selection.entries.length === 0 ? (
+            <Typography variant="body2" color="text.secondary" className={classes.code}>
+              No element selected yet
+            </Typography>
+          ) : null}
+          {selection.entries.length === 1 ? (
+            <>
+              <Box className={classes.selectionRow}>
+                <Typography variant="body2" className={`${classes.selectionLabel} ${classes.selectionPrimaryText}`}>
+                  {selectionLoading ? 'Loading selection details...' : primarySelection?.label ?? 'Unnamed element'}
+                </Typography>
+                <Typography variant="body2" color="text.secondary" className={classes.selectionTypeText}>
+                  {selectionLoading ? 'Resolving type...' : primarySelection?.type ?? 'Unknown type'}
+                </Typography>
+              </Box>
+              <Typography variant="caption" color="text.secondary" className={classes.subtleCode}>
+                {firstSelectedObjectId}
+              </Typography>
+            </>
+          ) : null}
         </Box>
 
         <Box className={classes.section}>

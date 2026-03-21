@@ -59,8 +59,13 @@ public class CreatePartUsageAgentToolTest {
         assertThat(reply.pendingConfirmation()).isTrue();
         assertThat(reply.proposal()).isNotNull();
         assertThat(reply.proposal().summary()).contains("Vehicle");
+        assertThat(reply.proposal().summary()).contains("Package");
         assertThat(reply.proposal().summary()).contains("VehicleSystem");
-        assertThat(reply.proposal().fields()).extracting(field -> field.value()).contains("Vehicle", "VehicleSystem");
+        assertThat(reply.proposal().fields()).extracting(field -> field.value()).contains("Vehicle", "Package", "VehicleSystem");
+        assertThat(reply.messages()).singleElement()
+                .extracting(AgentMessage::content)
+                .asString()
+                .contains("Package 'VehicleSystem'");
     }
 
     @Test
