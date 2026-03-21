@@ -62,7 +62,7 @@ And the following methods have been added:
 
 === Dependency update
 
-- [releng] Update to https://github.com/eclipse-sirius/sirius-web[Sirius Web 2026.1.5]
+- [releng] Update to https://github.com/eclipse-sirius/sirius-web[Sirius Web 2026.1.6]
 - [releng] Update to https://github.com/spring-projects/spring-boot/releases/tag/v3.5.11[Spring Boot 3.5.11]
 - [releng] Update to archunit-junit5 1.3.0
 - [releng] Update to @ObeoNetwork/gantt-task-react 0.6.3
@@ -160,6 +160,8 @@ Make sure diagnostics are sorted according to their validated element and its co
 - https://github.com/eclipse-syson/syson/issues/2057[#2057] [diagrams] Add the support for empty value for multiplicity in the ANTLR grammar.
 - https://github.com/eclipse-syson/syson/issues/2053[#2053] [diagrams] The graphical `ForkNode` and `JoinNode` now use `RectangularNodeStyleDescription` and are restricted to horizontal resizing.
 Consequently, their entire footprint is filled with black, ensuring that all incoming and outgoing edges maintain a valid connection point.
+- https://github.com/eclipse-syson/syson/issues/2085[#2085] [views-explorer] Adapt views explorer to group diagram representations by view definition.
+
 
 === New features
 
