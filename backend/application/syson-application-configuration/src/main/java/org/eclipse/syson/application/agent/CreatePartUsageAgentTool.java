@@ -87,6 +87,11 @@ public class CreatePartUsageAgentTool implements AgentTool {
                         .map(Element.class::cast)
                         .map(element -> Optional.ofNullable(element.getDeclaredName()).filter(name -> !name.isBlank()).orElse(targetObjectId))
                         .orElse(targetObjectId);
+                String targetType = this.objectSearchService.getObject(request.editingContext(), targetObjectId)
+                        .filter(Element.class::isInstance)
+                        .map(Element.class::cast)
+                        .map(element -> element.eClass().getName())
+                        .orElse("Element");
 
                 Map<String, String> proposalArguments = Map.of(
                         "declaredName", declaredName,
@@ -98,17 +103,19 @@ public class CreatePartUsageAgentTool implements AgentTool {
                         TOOL_DEFINITION.id(),
                         "CREATE_ELEMENT",
                         targetObjectId,
-                        targetLabel,
+                        targetType + " '" + targetLabel + "'",
                         "PartUsage",
-                        "Create PartUsage '" + declaredName + "' in " + targetLabel + ".",
+                        "Create PartUsage '" + declaredName + "' in " + targetType + " '" + targetLabel + "'.",
                         argumentsJson,
                         List.of(
                                 new AgentProposalField("Element Type", "PartUsage"),
                                 new AgentProposalField("Declared Name", declaredName),
+                                new AgentProposalField("Target Type", targetType),
                                 new AgentProposalField("Target", targetLabel)));
 
                 reply = new AgentReply(List.of(
-                        this.agentMessage("assistant", "I prepared a proposal for review. Confirm it to apply the model change.", "text")),
+                        this.agentMessage("assistant", "I prepared a proposal to create the new PartUsage in "
+                                + targetType + " '" + targetLabel + "'. Confirm it to apply the model change.", "text")),
                         proposal,
                         true);
             }

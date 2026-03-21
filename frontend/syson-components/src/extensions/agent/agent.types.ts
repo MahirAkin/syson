@@ -20,6 +20,12 @@ export interface AgentChatMessage {
   variant: 'text' | 'status' | 'result' | 'error';
 }
 
+export interface AgentSelectionObject {
+  id: string;
+  label: string;
+  type: string;
+}
+
 export interface AgentProposalField {
   name: string;
   value: string;
